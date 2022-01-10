@@ -8,6 +8,8 @@ import Home from "./home";
 import LaunchPads from "./launch-pads";
 import LaunchPad from "./launch-pad";
 import { FavoritesDrawer } from "./favorites-drawer";
+import Offices from "./offices";
+import Office from "./office";
 
 export default function App() {
   return (
@@ -19,6 +21,8 @@ export default function App() {
         <Route path="/launches/:launchId" element={<Launch />} />
         <Route path="/launch-pads" element={<LaunchPads />} />
         <Route path="/launch-pads/:launchPadId" element={<LaunchPad />} />
+        <Route path="/offices" element={<Offices />} />
+        <Route path="/offices/:office" element={<Office />} />
       </Routes>
     </div>
   );
