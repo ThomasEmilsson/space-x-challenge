@@ -33,7 +33,7 @@ import { FavoriteButton } from "./favorite-button";
 
 export default function Launch() {
   let { launchId } = useParams();
-  const { data: launch, error } = useSpaceX(`/launches/${launchId}`);
+  const { data: launch, error } = useSpaceX(`/launches/${launchId}`, {}, "v3");
 
   if (error) return <Error />;
   if (!launch) {

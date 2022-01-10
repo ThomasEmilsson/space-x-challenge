@@ -25,14 +25,22 @@ import { FavoriteButton } from "./favorite-button";
 
 export default function LaunchPad() {
   let { launchPadId } = useParams();
-  const { data: launchPad, error } = useSpaceX(`/launchpads/${launchPadId}`);
+  const { data: launchPad, error } = useSpaceX(
+    `/launchpads/${launchPadId}`,
+    {},
+    "v3"
+  );
 
-  const { data: launches } = useSpaceX(launchPad ? "/launches/past" : null, {
-    limit: 3,
-    order: "desc",
-    sort: "launch_date_utc",
-    site_id: launchPad?.site_id,
-  });
+  const { data: launches } = useSpaceX(
+    launchPad ? "/launches/past" : null,
+    {
+      limit: 3,
+      order: "desc",
+      sort: "launch_date_utc",
+      site_id: launchPad?.site_id,
+    },
+    "v3"
+  );
 
   if (error) return <Error />;
   if (!launchPad) {
