@@ -15,7 +15,8 @@ export default function LaunchPads() {
     "/launchpads",
     {
       limit: PAGE_SIZE,
-    }
+    },
+    "v3"
   );
 
   console.log(data, error);

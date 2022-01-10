@@ -20,7 +20,8 @@ export default function Launches() {
       limit: PAGE_SIZE,
       order: "desc",
       sort: "launch_date_utc",
-    }
+    },
+    "v3"
   );
 
   console.log(data, error);
