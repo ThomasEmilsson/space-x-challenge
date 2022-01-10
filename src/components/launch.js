@@ -24,11 +24,12 @@ import {
 
 import { useSpaceX } from "../utils/use-space-x";
 import {
-  formatDateTimetoLocalTimeZone,
   formatDateTimeToUserTimeZone,
+  formatDateTimetoLocalTimeZone,
 } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
+import { FavoriteButton } from "./favorite-button";
 
 export default function Launch() {
   let { launchId } = useParams();
@@ -88,17 +89,21 @@ function Header({ launch }) {
         objectFit="contain"
         objectPosition="bottom"
       />
-      <Heading
-        color="white"
-        display="inline"
-        backgroundColor="#718096b8"
-        fontSize={["lg", "5xl"]}
-        px="4"
-        py="2"
-        borderRadius="lg"
-      >
-        {launch.mission_name}
-      </Heading>
+      <Flex>
+        <Heading
+          color="white"
+          display="inline"
+          backgroundColor="#718096b8"
+          fontSize={["lg", "5xl"]}
+          px="4"
+          py="2"
+          borderRadius="lg"
+        >
+          {launch.mission_name}
+        </Heading>
+        <Box p="2" />
+        <FavoriteButton id={launch.flight_number} type="launch" data={launch} />
+      </Flex>
       <Stack isInline spacing="3">
         <Badge variantColor="purple" fontSize={["xs", "md"]}>
           #{launch.flight_number}
@@ -127,6 +132,7 @@ function TimeAndLocation({ launch }) {
             Launch Date
           </Box>
         </StatLabel>
+
         <Tooltip
           placement="top-start"
           label={formatDateTimeToUserTimeZone(launch.launch_date_local)}
