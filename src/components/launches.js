@@ -1,5 +1,6 @@
 import React from "react";
 import { Badge, Box, Image, SimpleGrid, Text, Flex } from "@chakra-ui/core";
+
 import { format as timeAgo } from "timeago.js";
 import { Link } from "react-router-dom";
 
@@ -8,6 +9,7 @@ import { formatDate } from "../utils/format-date";
 import Error from "./error";
 import Breadcrumbs from "./breadcrumbs";
 import LoadMoreButton from "./load-more-button";
+import { FavoriteButton } from "./favorite-button";
 
 const PAGE_SIZE = 12;
 
@@ -20,6 +22,7 @@ export default function Launches() {
       sort: "launch_date_utc",
     }
   );
+
   console.log(data, error);
   return (
     <div>
@@ -32,7 +35,12 @@ export default function Launches() {
           data
             .flat()
             .map((launch) => (
-              <LaunchItem launch={launch} key={launch.flight_number} />
+              <LaunchItem
+                launch={launch}
+                key={launch.flight_number}
+                showFavorite
+                showImage
+              />
             ))}
       </SimpleGrid>
       <LoadMoreButton
@@ -45,78 +53,93 @@ export default function Launches() {
   );
 }
 
-export function LaunchItem({ launch }) {
+export function LaunchItem({ launch, showImage, showFavorite }) {
   return (
     <Box
       as={Link}
       to={`/launches/${launch.flight_number.toString()}`}
       boxShadow="md"
-      borderWidth="1px"
+      borderWidth={showImage ? "1px" : "0px"}
       rounded="lg"
       overflow="hidden"
       position="relative"
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
     >
-      <Image
-        src={
-          launch.links.flickr_images[0]?.replace("_o.jpg", "_z.jpg") ??
-          launch.links.mission_patch_small
-        }
-        alt={`${launch.mission_name} launch`}
-        height={["200px", null, "300px"]}
-        width="100%"
-        objectFit="cover"
-        objectPosition="bottom"
-      />
+      {showImage && (
+        <>
+          <Image
+            src={
+              launch.links.flickr_images[0]?.replace("_o.jpg", "_z.jpg") ??
+              launch.links.mission_patch_small
+            }
+            alt={`${launch.mission_name} launch`}
+            height={["200px", null, "300px"]}
+            width="100%"
+            objectFit="cover"
+            objectPosition="bottom"
+          />
+          <Image
+            position="absolute"
+            top="5"
+            right="5"
+            src={launch.links.mission_patch_small}
+            height="75px"
+            objectFit="contain"
+            objectPosition="bottom"
+          />
+        </>
+      )}
 
-      <Image
-        position="absolute"
-        top="5"
-        right="5"
-        src={launch.links.mission_patch_small}
-        height="75px"
-        objectFit="contain"
-        objectPosition="bottom"
-      />
-
-      <Box p="6">
-        <Box d="flex" alignItems="baseline">
-          {launch.launch_success ? (
-            <Badge px="2" variant="solid" variantColor="green">
-              Successful
-            </Badge>
-          ) : (
-            <Badge px="2" variant="solid" variantColor="red">
-              Failed
-            </Badge>
-          )}
-          <Box
-            color="gray.500"
-            fontWeight="semibold"
-            letterSpacing="wide"
-            fontSize="xs"
-            textTransform="uppercase"
-            ml="2"
-          >
-            {launch.rocket.rocket_name} &bull; {launch.launch_site.site_name}
+      <Flex>
+        <Box p="6">
+          <Box d="flex" alignItems="baseline">
+            {launch.launch_success ? (
+              <Badge px="2" variant="solid" variantColor="green">
+                Successful
+              </Badge>
+            ) : (
+              <Badge px="2" variant="solid" variantColor="red">
+                Failed
+              </Badge>
+            )}
+            <Box
+              color="gray.500"
+              fontWeight="semibold"
+              letterSpacing="wide"
+              fontSize="xs"
+              textTransform="uppercase"
+              ml="2"
+            >
+              {launch.rocket.rocket_name} &bull; {launch.launch_site.site_name}
+            </Box>
           </Box>
-        </Box>
 
-        <Box
-          mt="1"
-          fontWeight="semibold"
-          as="h4"
-          lineHeight="tight"
-          isTruncated
-        >
-          {launch.mission_name}
+          <Box
+            mt="1"
+            fontWeight="semibold"
+            as="h4"
+            lineHeight="tight"
+            isTruncated
+          >
+            {launch.mission_name}
+          </Box>
+          <Flex>
+            <Text fontSize="sm">{formatDate(launch.launch_date_utc)} </Text>
+            <Text color="gray.500" ml="2" fontSize="sm">
+              {timeAgo(launch.launch_date_utc)}
+            </Text>
+          </Flex>
         </Box>
-        <Flex>
-          <Text fontSize="sm">{formatDate(launch.launch_date_utc)} </Text>
-          <Text color="gray.500" ml="2" fontSize="sm">
-            {timeAgo(launch.launch_date_utc)}
-          </Text>
-        </Flex>
-      </Box>
+        {showFavorite && (
+          <FavoriteButton
+            id={launch.flight_number}
+            type="launch"
+            data={launch}
+          />
+        )}
+      </Flex>
     </Box>
   );
 }
